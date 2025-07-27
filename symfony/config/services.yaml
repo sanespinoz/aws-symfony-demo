@@ -1,0 +1,85 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    aws_s3_endpoint: 'http://localstack:4566'
+    aws_s3_region: 'us-east-1'
+    aws_s3_key: 'test'
+    aws_s3_secret: 'test'
+    aws_s3_bucket: 'my-bucket'
+    aws_dynamodb_endpoint: 'http://localstack:4566'
+    aws_dynamodb_region: 'us-east-1'
+    aws_dynamodb_key: 'test'
+    aws_dynamodb_secret: 'test'
+    aws_dynamodb_table_users: 'Users'
+    aws_sqs_endpoint: 'http://localstack:4566'
+    aws_sqs_region: 'us-east-1'
+    aws_sqs_key: 'test'
+    aws_sqs_secret: 'test'
+    aws_sqs_queue_name: 'my-queue'
+    aws_sns_endpoint: 'http://localstack:4566'
+    aws_sns_region: 'us-east-1'
+    aws_sns_key: 'test'
+    aws_sns_secret: 'test'
+    aws_sns_topic_name: 'my-topic'
+    aws_sns_topic_arn: 'arn:aws:sns:us-east-1:000000000000:my-topic'
+
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\Service\S3Uploader:
+        arguments:
+            $endpoint: '%aws_s3_endpoint%'
+            $region: '%aws_s3_region%'
+            $key: '%aws_s3_key%'
+            $secret: '%aws_s3_secret%'
+            $bucket: '%aws_s3_bucket%'
+    
+    App\Service\DynamoDbService:
+        arguments:
+            $endpoint: '%aws_dynamodb_endpoint%'
+            $region: '%aws_dynamodb_region%'
+            $key: '%aws_dynamodb_key%'
+            $secret: '%aws_dynamodb_secret%'
+            $tableName: '%aws_dynamodb_table_users%'
+            
+    App\Service\SqsService:
+        arguments:
+            $endpoint: '%aws_sqs_endpoint%'
+            $region: '%aws_sqs_region%'
+            $key: '%aws_sqs_key%'
+            $secret: '%aws_sqs_secret%'
+            $queueName: '%aws_sqs_queue_name%'
+
+    App\Service\SnsService:
+        arguments:
+            $endpoint: '%aws_sns_endpoint%'
+            $region: '%aws_sns_region%'
+            $key: '%aws_sns_key%'
+            $secret: '%aws_sns_secret%'
+            $topicName: '%aws_sns_topic_name%'
+
+    App\Service\SnsPublisher:
+        arguments:
+            $endpoint: '%aws_sns_endpoint%'
+            $region: '%aws_sns_region%'
+            $key: '%aws_sns_key%'
+            $secret: '%aws_sns_secret%'
+            $topicArn: '%aws_sns_topic_arn%'
+
+
+    

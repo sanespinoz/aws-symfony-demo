@@ -1,0 +1,15 @@
+<nav style="margin-bottom: 20px;">
+    <a href="{{ path('s3_files') }}">📂 Ver archivos en S3</a>
+</nav>
+
+
+<h1>Subir archivo a S3</h1>
+
+{% if message %}
+    <p><strong>{{ message }}</strong></p>
+{% endif %}
+
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+    {{ form_row(form.file) }}
+    <button class="btn">Subir</button>
+{{ form_end(form) }}

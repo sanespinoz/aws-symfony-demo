@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block nav %}
+<nav style="margin-bottom: 20px;">
+    <a href="{{ path('upload') }}">📤 Subir archivo</a>
+</nav>
+{% endblock %}
+
+{% block title %}Archivos en S3{% endblock %}
+
+{% block body %}
+    <h1>📂 Archivos en S3</h1>
+
+    {% if archivos is empty %}
+        <p>No hay archivos en el bucket.</p>
+    {% else %}
+        <ul>
+            {% for archivo in archivos %}
+                <li>
+                    <a href="http://localhost:4566/my-bucket/{{ archivo }}" target="_blank">
+                        {{ archivo }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

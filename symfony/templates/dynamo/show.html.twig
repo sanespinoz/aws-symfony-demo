@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detalle Usuario{% endblock %}
+
+{% block body %}
+    <h1>Usuario en DynamoDB</h1>
+    <ul>
+        {% for key, value in item %}
+            <li><strong>{{ key }}</strong>: {{ value.S ?? value.N ?? '(?)' }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

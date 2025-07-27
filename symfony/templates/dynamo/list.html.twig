@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista de Usuarios{% endblock %}
+
+{% block body %}
+    <h1>📋 Lista de Usuarios en DynamoDB</h1>
+
+    {% if users is empty %}
+        <p>No hay usuarios en la tabla.</p>
+    {% else %}
+        <ul>
+            {% for user in users %}
+                <li>
+                    <strong>ID:</strong> {{ user.UserId.S }}<br>
+                    <strong>Nombre:</strong> {{ user.Name.S }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

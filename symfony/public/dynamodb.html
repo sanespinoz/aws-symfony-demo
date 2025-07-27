@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Gestión de Usuarios DynamoDB</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 20px;
+            }
+            input,
+            button {
+                margin: 5px;
+                padding: 5px;
+            }
+            table {
+                margin-top: 20px;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            th,
+            td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            pre {
+                background: #f9f9f9;
+                padding: 10px;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Usuarios en DynamoDB</h1>
+
+        <div>
+            <input type="text" id="userId" placeholder="ID del usuario" />
+            <input type="text" id="userName" placeholder="Nombre" />
+            <br />
+            <button onclick="createUser()">Crear</button>
+            <button onclick="getUser()">Ver uno</button>
+            <button onclick="updateUser()">Actualizar</button>
+            <button onclick="deleteUser()">Eliminar</button>
+            <button onclick="listUsers()">Listar todos</button>
+        </div>
+
+        <h2>Resultado</h2>
+        <div id="resultArea">
+            <pre id="output">Esperando acción...</pre>
+        </div>
+
+        <script>
+            const apiUrl = "/users";
+
+            function getValues() {
+                return {
+                    id: document.getElementById("userId").value.trim(),
+                    name: document.getElementById("userName").value.trim(),
+                };
+            }
+
+            function output(content) {
+                const area = document.getElementById("resultArea");
+                area.innerHTML = '<pre id="output">' + content + "</pre>";
+            }
+
+            function outputTable(data) {
+                if (!Array.isArray(data))
+                    return output("Error: los datos no son una lista.");
+
+                if (data.length === 0) return output("No hay registros.");
+
+                let table = `<table>
+        <thead><tr><th>ID</th><th>Nombre</th></tr></thead><tbody>`;
+
+                data.forEach((item) => {
+                    const id = item.UserId?.S || "-";
+                    const name = item.Name?.S || "-";
+                    table += `<tr><td>${id}</td><td>${name}</td></tr>`;
+                });
+
+                table += `</tbody></table>`;
+                document.getElementById("resultArea").innerHTML = table;
+            }
+
+            async function createUser() {
+                const { id, name } = getValues();
+                if (!id || !name)
+                    return alert("Completa ambos campos (ID y Nombre).");
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, name }),
+                });
+                const data = await res.json();
+                output(JSON.stringify(data, null, 2));
+            }
+
+            async function getUser() {
+                const { id } = getValues();
+                if (!id) return alert("Escribe el ID del usuario a buscar.");
+
+                const res = await fetch(`${apiUrl}/${id}`);
+                const data = await res.json();
+                output(JSON.stringify(data, null, 2));
+            }
+
+            async function updateUser() {
+                const { id, name } = getValues();
+                if (!id || !name)
+                    return alert("Completa ambos campos para actualizar.");
+
+                const res = await fetch(`${apiUrl}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name }),
+                });
+                const data = await res.json();
+                output(JSON.stringify(data, null, 2));
+            }
+
+            async function deleteUser() {
+                const { id } = getValues();
+                if (!id) return alert("Indica el ID del usuario a eliminar.");
+
+                const res = await fetch(`${apiUrl}/${id}`, {
+                    method: "DELETE",
+                });
+                const data = await res.json();
+                output(JSON.stringify(data, null, 2));
+            }
+
+            async function listUsers() {
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+                outputTable(data);
+            }
+        </script>
+    </body>
+</html>
